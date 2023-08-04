@@ -1,4 +1,5 @@
 import { IsArray, IsDate, IsNotEmpty, IsString } from 'class-validator';
+import { IUser } from 'src/users/entities/user.interface';
 
 export class CreatePostDto {
   @IsNotEmpty()
@@ -9,9 +10,7 @@ export class CreatePostDto {
   @IsString()
   content: string;
 
-  @IsNotEmpty()
-  @IsString()
-  author: string;
+  author: IUser;
 
   @IsDate()
   publicationDate: Date = new Date();

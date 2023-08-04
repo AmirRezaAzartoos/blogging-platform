@@ -5,6 +5,7 @@ import { BlogModule } from './blog/blog.module';
 import { LoggerMiddleware } from './middleware/logger.middleware';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       synchronize: true,
     }),
     BlogModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

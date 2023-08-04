@@ -1,39 +1,37 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { RegisterUserDto } from './register-user.dto';
 import {
+  IsArray,
+  IsDate,
   IsNotEmpty,
   IsString,
-  IsArray,
   IsOptional,
+  MinLength,
   IsEmail,
 } from 'class-validator';
-import { Role } from '../entities/role.enum';
 import { IPost } from 'src/blog/posts/entities/post.interface';
+import { Role } from '../entities/role.enum';
 
-export class UpdateUserDto extends PartialType(RegisterUserDto) {
-  @IsOptional()
+export class RegisterUserDto {
   @IsNotEmpty()
   @IsString()
   firstName: string;
 
-  @IsOptional()
   @IsNotEmpty()
   @IsString()
   lastName: string;
 
-  @IsOptional()
   @IsNotEmpty()
   @IsString()
   @IsEmail()
   email: string;
 
-  @IsOptional()
   @IsNotEmpty()
   @IsString()
+  @MinLength(8)
   password: string;
 
-  @IsOptional()
-  @IsNotEmpty()
+  @IsDate()
+  creationDate: Date = new Date();
+
   role: Role;
 
   @IsOptional()

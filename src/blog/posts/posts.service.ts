@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { Repository, UpdateResult, DeleteResult } from 'typeorm';
-import { PostEntity } from './posts.entity';
-import { v4 as uuid } from 'uuid';
+import { PostEntity } from './entities/posts.entity';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IPost } from './post.interface';
+import { IUser } from 'src/users/entities/user.interface';
+import { IPost } from './entities/post.interface';
 
 @Injectable()
 export class PostsService {
@@ -14,34 +14,27 @@ export class PostsService {
     private readonly postRepository: Repository<PostEntity>,
   ) {}
 
-  async createPost(createPostDto: CreatePostDto): Promise<IPost> {
-    const id = uuid();
-    return await this.postRepository.save({
-      id: id,
-      title: createPostDto.title,
-      content: createPostDto.content,
-      author: createPostDto.author,
-      publicationDate: new Date(),
-      tags: createPostDto.tags,
-    });
+  async createPost(user: IUser, createPostDto: CreatePostDto): Promise<IPost> {
+    createPostDto.author = user;
+    return await this.postRepository.save(createPostDto);
   }
 
-  async getPosts(): Promise<Array<IPost>> {
+  async getPosts(): Promise<PostEntity[]> {
     return await this.postRepository.find();
   }
 
-  async getPost(postId: string): Promise<IPost> {
+  async getPost(postId: number): Promise<PostEntity> {
     return await this.postRepository.findOneBy({ id: postId });
   }
 
   async updatePost(
-    postId: string,
+    postId: number,
     updatePostDto: UpdatePostDto,
   ): Promise<UpdateResult> {
     return await this.postRepository.update(postId, updatePostDto);
   }
 
-  async deletePost(postId: string): Promise<DeleteResult> {
+  async deletePost(postId: number): Promise<DeleteResult> {
     return await this.postRepository.delete(postId);
   }
 }

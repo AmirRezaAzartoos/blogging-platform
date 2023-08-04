@@ -1,12 +1,9 @@
-import {
-  IsNotEmpty,
-  IsString,
-  IsArray,
-  IsDate,
-  IsOptional,
-} from 'class-validator';
+import { IsNotEmpty, IsString, IsArray, IsOptional } from 'class-validator';
+import { IUser } from 'src/users/entities/user.interface';
+import { PartialType } from '@nestjs/mapped-types';
+import { CreatePostDto } from './create-post.dto';
 
-export class UpdatePostDto {
+export class UpdatePostDto extends PartialType(CreatePostDto) {
   @IsOptional()
   @IsNotEmpty()
   @IsString()
@@ -19,12 +16,7 @@ export class UpdatePostDto {
 
   @IsOptional()
   @IsNotEmpty()
-  @IsString()
-  author?: string;
-
-  @IsOptional()
-  @IsDate()
-  publicationDate?: Date;
+  author?: IUser;
 
   @IsOptional()
   @IsArray()
