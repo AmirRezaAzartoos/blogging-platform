@@ -21,13 +21,14 @@ import { IPost } from './entities/post.interface';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Role } from 'src/users/entities/role.enum';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { PostOwnerGuard } from 'src/auth/guards/postOwner.guard';
 
 @Controller('posts')
 export class PostsController {
   private readonly logger = new Logger(PostsController.name);
   constructor(private readonly postsService: PostsService) {}
 
-  @Roles(Role.ADMIN, Role.USER)
+  @Roles(Role.USER)
   @UseGuards(JwtGuard, RolesGuard)
   @Post()
   async createPost(
@@ -90,8 +91,8 @@ export class PostsController {
     }
   }
 
-  @Roles(Role.ADMIN)
-  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(Role.USER) // Here i think its for best if ADMIN can not edit post
+  @UseGuards(JwtGuard, RolesGuard, PostOwnerGuard)
   @Put(':postId')
   async updatePost(
     @Param('postId') postId: number,
@@ -109,8 +110,8 @@ export class PostsController {
     }
   }
 
-  @Roles(Role.ADMIN)
-  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(Role.ADMIN, Role.USER)
+  @UseGuards(JwtGuard, RolesGuard, PostOwnerGuard)
   @Delete(':postId')
   async deletePost(@Param('postId') postId: number): Promise<DeleteResult> {
     try {

@@ -19,6 +19,7 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Role } from './entities/role.enum';
 import { JwtGuard } from 'src/auth/guards/jwt.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { UserOwnerGuard } from 'src/auth/guards/userOwner.guard';
 
 @Controller('users')
 export class UsersController {
@@ -51,6 +52,8 @@ export class UsersController {
     }
   }
 
+  @Roles(Role.ADMIN)
+  @UseGuards(JwtGuard, RolesGuard)
   @Get()
   findAll() {
     try {
@@ -62,8 +65,8 @@ export class UsersController {
     }
   }
 
-  @Roles(Role.ADMIN)
-  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(Role.ADMIN, Role.USER)
+  @UseGuards(JwtGuard, RolesGuard, UserOwnerGuard)
   @Get(':id')
   findOne(@Param('id') id: number) {
     try {
@@ -75,8 +78,8 @@ export class UsersController {
     }
   }
 
-  @Roles(Role.ADMIN)
-  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(Role.ADMIN, Role.USER)
+  @UseGuards(JwtGuard, RolesGuard, UserOwnerGuard)
   @Put(':id')
   async update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
     try {
@@ -88,8 +91,8 @@ export class UsersController {
     }
   }
 
-  @Roles(Role.ADMIN)
-  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(Role.ADMIN, Role.USER)
+  @UseGuards(JwtGuard, RolesGuard, UserOwnerGuard)
   @Delete(':id')
   async delete(@Param('id') id: number) {
     try {

@@ -5,7 +5,6 @@ import * as bcrypt from 'bcrypt';
 import { UserEntity } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, UpdateResult, DeleteResult } from 'typeorm';
-import { v4 as uuid } from 'uuid';
 import { LoginDto } from './dto/login-user.dto';
 import { IUser } from './entities/user.interface';
 import { JwtService } from '@nestjs/jwt';
