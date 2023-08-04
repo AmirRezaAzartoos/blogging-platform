@@ -1,4 +1,4 @@
-import { CommentEntity } from 'src/blog/comments/entities/comment.entity';
+import { PostEntity } from 'src/blog/posts/entities/posts.entity';
 import { UserEntity } from 'src/users/entities/user.entity';
 import {
   Entity,
@@ -6,16 +6,12 @@ import {
   Column,
   CreateDateColumn,
   ManyToOne,
-  OneToMany,
 } from 'typeorm';
 
-@Entity('post')
-export class PostEntity {
+@Entity('comment')
+export class CommentEntity {
   @PrimaryGeneratedColumn()
   id: number;
-
-  @Column()
-  title: string;
 
   @Column()
   content: string;
@@ -26,9 +22,6 @@ export class PostEntity {
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   publicationDate: Date;
 
-  @Column('text', { array: true })
-  tags: Array<string>;
-
-  @OneToMany(() => CommentEntity, (commentEntity) => commentEntity.post)
-  comments: CommentEntity[];
+  @ManyToOne(() => PostEntity, (postEntity) => postEntity.comments)
+  post: PostEntity;
 }

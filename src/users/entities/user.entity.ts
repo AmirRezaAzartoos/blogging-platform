@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 import { Role } from './role.enum';
 import { PostEntity } from 'src/blog/posts/entities/posts.entity';
+import { CommentEntity } from 'src/blog/comments/entities/comment.entity';
 
 @Entity('user')
 export class UserEntity {
@@ -33,4 +34,7 @@ export class UserEntity {
 
   @OneToMany(() => PostEntity, (postEntity) => postEntity.author)
   posts: PostEntity[];
+
+  @OneToMany(() => CommentEntity, (commentEntity) => commentEntity.author)
+  comments: CommentEntity[];
 }

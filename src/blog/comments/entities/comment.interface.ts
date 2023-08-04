@@ -1,9 +1,9 @@
+import { IPost } from 'src/blog/posts/entities/post.interface';
 import { IUser } from 'src/users/entities/user.interface';
-export interface IPost {
+export interface IComment {
   id?: number;
-  title: string;
   content: string;
   author?: IUser;
   publicationDate?: Date;
-  tags?: Array<string>;
+  post?: IPost;
 }

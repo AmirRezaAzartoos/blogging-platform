@@ -86,7 +86,7 @@ export class PostsController {
       return post;
     } catch (error) {
       this.logger.error(
-        `Error occurred while retrieved a single post: ${error}`,
+        `Error occurred while retrieving a single post: ${error}`,
       );
     }
   }
