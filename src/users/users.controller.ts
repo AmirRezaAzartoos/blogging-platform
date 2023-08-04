@@ -8,12 +8,17 @@ import {
   Logger,
   BadRequestException,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { LoginDto } from './dto/login-user.dto';
 import { IUser } from './entities/user.interface';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { Role } from './entities/role.enum';
+import { JwtGuard } from 'src/auth/guards/jwt.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 
 @Controller('users')
 export class UsersController {
@@ -57,6 +62,8 @@ export class UsersController {
     }
   }
 
+  @Roles(Role.ADMIN)
+  @UseGuards(JwtGuard, RolesGuard)
   @Get(':id')
   findOne(@Param('id') id: number) {
     try {
@@ -68,6 +75,8 @@ export class UsersController {
     }
   }
 
+  @Roles(Role.ADMIN)
+  @UseGuards(JwtGuard, RolesGuard)
   @Put(':id')
   async update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
     try {
@@ -79,6 +88,8 @@ export class UsersController {
     }
   }
 
+  @Roles(Role.ADMIN)
+  @UseGuards(JwtGuard, RolesGuard)
   @Delete(':id')
   async delete(@Param('id') id: number) {
     try {

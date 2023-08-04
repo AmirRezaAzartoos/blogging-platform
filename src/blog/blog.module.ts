@@ -7,5 +7,6 @@ import { PostEntity } from './posts/entities/posts.entity';
   imports: [TypeOrmModule.forFeature([PostEntity])],
   controllers: [PostsController],
   providers: [PostsService],
+  exports: [PostsService],
 })
 export class BlogModule {}

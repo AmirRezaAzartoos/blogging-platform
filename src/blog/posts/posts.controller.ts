@@ -9,6 +9,7 @@ import {
   Delete,
   UseGuards,
   Request,
+  Query,
 } from '@nestjs/common';
 import { UpdateResult, DeleteResult } from 'typeorm';
 import { PostsService } from './posts.service';
@@ -17,13 +18,17 @@ import { UpdatePostDto } from './dto/update-post.dto';
 import { PostEntity } from './entities/posts.entity';
 import { JwtGuard } from 'src/auth/guards/jwt.guard';
 import { IPost } from './entities/post.interface';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { Role } from 'src/users/entities/role.enum';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 
 @Controller('posts')
 export class PostsController {
   private readonly logger = new Logger(PostsController.name);
   constructor(private readonly postsService: PostsService) {}
 
-  @UseGuards(JwtGuard)
+  @Roles(Role.ADMIN, Role.USER)
+  @UseGuards(JwtGuard, RolesGuard)
   @Post()
   async createPost(
     @Body() createPostDto: CreatePostDto,
@@ -41,14 +46,34 @@ export class PostsController {
     }
   }
 
+  // @Get()
+  // async getAllPosts(): Promise<Array<PostEntity>> {
+  //   try {
+  //     const allPosts = await this.postsService.getAllPosts();
+  //     this.logger.log('All posts retrieved.');
+  //     return allPosts;
+  //   } catch (error) {
+  //     this.logger.error(`Error occurred while retrieving all posts: ${error}`);
+  //   }
+  // }
+
   @Get()
-  async getPosts(): Promise<Array<PostEntity>> {
+  async getSelectedPosts(
+    @Query('take') take: number,
+    @Query('skip') skip: number,
+  ): Promise<Array<PostEntity>> {
     try {
-      const allPosts = await this.postsService.getPosts();
-      this.logger.log('All posts retrieved.');
-      return allPosts;
+      take = take > 15 ? 15 : take;
+      const selectedPosts = await this.postsService.getSelectedPosts(
+        take || 10,
+        skip || 0,
+      );
+      this.logger.log('Selcterd posts retrieved.');
+      return selectedPosts;
     } catch (error) {
-      this.logger.error(`Error occurred while retrieving all posts: ${error}`);
+      this.logger.error(
+        `Error occurred while retrieving selected posts: ${error}`,
+      );
     }
   }
 
@@ -65,6 +90,8 @@ export class PostsController {
     }
   }
 
+  @Roles(Role.ADMIN)
+  @UseGuards(JwtGuard, RolesGuard)
   @Put(':postId')
   async updatePost(
     @Param('postId') postId: number,
@@ -82,6 +109,8 @@ export class PostsController {
     }
   }
 
+  @Roles(Role.ADMIN)
+  @UseGuards(JwtGuard, RolesGuard)
   @Delete(':postId')
   async deletePost(@Param('postId') postId: number): Promise<DeleteResult> {
     try {

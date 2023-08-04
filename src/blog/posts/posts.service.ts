@@ -19,12 +19,36 @@ export class PostsService {
     return await this.postRepository.save(createPostDto);
   }
 
-  async getPosts(): Promise<PostEntity[]> {
-    return await this.postRepository.find();
+  // async getAllPosts(): Promise<PostEntity[]> {
+  //   return await this.postRepository.find();
+  // }
+
+  async getSelectedPosts(take, skip): Promise<PostEntity[]> {
+    return await this.postRepository
+      .findAndCount({ take, skip })
+      .then((data) => {
+        return data[0];
+      });
   }
 
   async getPost(postId: number): Promise<PostEntity> {
-    return await this.postRepository.findOneBy({ id: postId });
+    return await this.postRepository
+      .createQueryBuilder('post')
+      .leftJoinAndSelect('post.author', 'author')
+      .where('post.id = :postId', { postId })
+      .select([
+        'post.id',
+        'post.title',
+        'post.content',
+        'post.publicationDate',
+        'post.tags',
+        'author.id',
+        'author.firstName',
+        'author.lastName',
+        'author.email',
+        'author.role',
+      ])
+      .getOne();
   }
 
   async updatePost(
