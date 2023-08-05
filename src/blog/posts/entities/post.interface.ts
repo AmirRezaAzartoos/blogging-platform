@@ -1,4 +1,4 @@
-import { IUser } from 'src/users/entities/user.interface';
+import { IUser } from '../../../users/entities/user.interface';
 export interface IPost {
   id?: number;
   title: string;

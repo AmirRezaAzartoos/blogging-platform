@@ -6,8 +6,8 @@ import {
   OneToMany,
 } from 'typeorm';
 import { Role } from './role.enum';
-import { PostEntity } from 'src/blog/posts/entities/posts.entity';
-import { CommentEntity } from 'src/blog/comments/entities/comment.entity';
+import { PostEntity } from '../../blog/posts/entities/posts.entity';
+import { CommentEntity } from '../../blog/comments/entities/comment.entity';
 
 @Entity('user')
 export class UserEntity {
@@ -30,11 +30,11 @@ export class UserEntity {
   role: Role;
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  creationDate: Date;
+  creationDate?: Date;
 
   @OneToMany(() => PostEntity, (postEntity) => postEntity.author)
-  posts: PostEntity[];
+  posts?: PostEntity[];
 
   @OneToMany(() => CommentEntity, (commentEntity) => commentEntity.author)
-  comments: CommentEntity[];
+  comments?: CommentEntity[];
 }

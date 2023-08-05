@@ -4,7 +4,7 @@ import { UpdateCommentDto } from './dto/update-comment.dto';
 import { CommentEntity } from './entities/comment.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, UpdateResult, DeleteResult } from 'typeorm';
-import { IUser } from 'src/users/entities/user.interface';
+import { IUser } from '../../users/entities/user.interface';
 
 @Injectable()
 export class CommentsService {

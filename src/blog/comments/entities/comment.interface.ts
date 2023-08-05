@@ -1,5 +1,5 @@
-import { IPost } from 'src/blog/posts/entities/post.interface';
-import { IUser } from 'src/users/entities/user.interface';
+import { IPost } from '../../../blog/posts/entities/post.interface';
+import { IUser } from '../../../users/entities/user.interface';
 export interface IComment {
   id?: number;
   content: string;

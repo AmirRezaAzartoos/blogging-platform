@@ -1,13 +1,13 @@
 import { IsDate, IsNotEmpty, IsString } from 'class-validator';
-import { IUser } from 'src/users/entities/user.interface';
+import { IUser } from '../../../users/entities/user.interface';
 
 export class CreateCommentDto {
   @IsNotEmpty()
   @IsString()
   content: string;
 
-  author: IUser;
+  author?: IUser;
 
   @IsDate()
-  publicationDate: Date = new Date();
+  publicationDate?: Date = new Date();
 }

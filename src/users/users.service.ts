@@ -1,11 +1,15 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
 import { UserEntity } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, UpdateResult, DeleteResult } from 'typeorm';
-import { LoginDto } from './dto/login-user.dto';
+import { LoginUserDto } from './dto/login-user.dto';
 import { IUser } from './entities/user.interface';
 import { JwtService } from '@nestjs/jwt';
 import { compare } from 'bcrypt';
@@ -27,7 +31,18 @@ export class UsersService {
     return this.jwtService.sign(payload);
   }
 
+  private async checkUserExists(email: string): Promise<IUser> {
+    return await this.userRepository.findOne({
+      where: { email },
+      select: ['id', 'firstName', 'lastName', 'email', 'password', 'role'],
+    });
+  }
+
   async register(registerUserDto: RegisterUserDto): Promise<IUser> {
+    const user = await this.checkUserExists(registerUserDto.email);
+    if (user) {
+      throw new BadRequestException('Email already exists.');
+    }
     registerUserDto.password = await this.hashPassword(
       registerUserDto.password,
     );
@@ -36,12 +51,9 @@ export class UsersService {
     return createUser;
   }
 
-  async login(loginDto: LoginDto): Promise<{ accessToken: string }> {
-    const { email, password } = loginDto;
-    const user = await this.userRepository.findOne({
-      where: { email },
-      select: ['id', 'firstName', 'lastName', 'email', 'password', 'role'],
-    });
+  async login(loginUserDto: LoginUserDto): Promise<{ accessToken: string }> {
+    const { email, password } = loginUserDto;
+    const user = await this.checkUserExists(email);
     if (!user) {
       throw new UnauthorizedException('Invalid credentials.');
     }

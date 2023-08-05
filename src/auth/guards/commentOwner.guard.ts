@@ -1,5 +1,5 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { CommentsService } from 'src/blog/comments/comments.service';
+import { CommentsService } from '../../blog/comments/comments.service';
 
 @Injectable()
 export class CommentOwnerGuard implements CanActivate {

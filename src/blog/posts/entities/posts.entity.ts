@@ -1,5 +1,5 @@
-import { CommentEntity } from 'src/blog/comments/entities/comment.entity';
-import { UserEntity } from 'src/users/entities/user.entity';
+import { CommentEntity } from '../../../blog/comments/entities/comment.entity';
+import { UserEntity } from '../../../users/entities/user.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,

@@ -10,25 +10,26 @@ import {
   UseGuards,
   Request,
   Query,
+  BadRequestException,
 } from '@nestjs/common';
 import { UpdateResult, DeleteResult } from 'typeorm';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PostEntity } from './entities/posts.entity';
-import { JwtGuard } from 'src/auth/guards/jwt.guard';
+import { JwtGuard } from '../../auth/guards/jwt.guard';
 import { IPost } from './entities/post.interface';
-import { Roles } from 'src/auth/decorators/roles.decorator';
-import { Role } from 'src/users/entities/role.enum';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { PostOwnerGuard } from 'src/auth/guards/postOwner.guard';
+import { Roles } from '../../auth/decorators/roles.decorator';
+import { Role } from '../../users/entities/role.enum';
+import { RolesGuard } from '../../auth/guards/roles.guard';
+import { PostOwnerGuard } from '../../auth/guards/postOwner.guard';
 
 @Controller('posts')
 export class PostsController {
   private readonly logger = new Logger(PostsController.name);
   constructor(private readonly postsService: PostsService) {}
 
-  @Roles(Role.USER)
+  @Roles(Role.ADMIN, Role.USER)
   @UseGuards(JwtGuard, RolesGuard)
   @Post()
   async createPost(
@@ -44,6 +45,7 @@ export class PostsController {
       return createdPost;
     } catch (error) {
       this.logger.error(`Error occurred while creating a post: ${error}`);
+      throw error;
     }
   }
 
@@ -75,6 +77,7 @@ export class PostsController {
       this.logger.error(
         `Error occurred while retrieving selected posts: ${error}`,
       );
+      throw error;
     }
   }
 
@@ -88,6 +91,7 @@ export class PostsController {
       this.logger.error(
         `Error occurred while retrieving a single post: ${error}`,
       );
+      throw error;
     }
   }
 
@@ -107,6 +111,7 @@ export class PostsController {
       return updatePost;
     } catch (error) {
       this.logger.error(`Error occurred while updating a post: ${error}`);
+      throw error;
     }
   }
 
@@ -120,6 +125,7 @@ export class PostsController {
       return deletePost;
     } catch (error) {
       this.logger.error(`Error occurred while deleting a post: ${error}`);
+      throw error;
     }
   }
 }

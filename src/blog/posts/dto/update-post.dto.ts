@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsString, IsArray, IsOptional } from 'class-validator';
-import { IUser } from 'src/users/entities/user.interface';
+import { IUser } from '../../../users/entities/user.interface';
 import { PartialType } from '@nestjs/mapped-types';
 import { CreatePostDto } from './create-post.dto';
 

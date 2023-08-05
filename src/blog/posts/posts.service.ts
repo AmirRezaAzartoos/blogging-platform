@@ -4,7 +4,7 @@ import { PostEntity } from './entities/posts.entity';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IUser } from 'src/users/entities/user.interface';
+import { IUser } from '../../users/entities/user.interface';
 import { IPost } from './entities/post.interface';
 
 @Injectable()

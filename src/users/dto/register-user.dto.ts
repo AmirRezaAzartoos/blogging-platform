@@ -7,7 +7,7 @@ import {
   MinLength,
   IsEmail,
 } from 'class-validator';
-import { IPost } from 'src/blog/posts/entities/post.interface';
+import { IPost } from '../../blog/posts/entities/post.interface';
 import { Role } from '../entities/role.enum';
 
 export class RegisterUserDto {
@@ -30,11 +30,11 @@ export class RegisterUserDto {
   password: string;
 
   @IsDate()
-  creationDate: Date = new Date();
+  creationDate?: Date = new Date();
 
-  role: Role;
+  role?: Role;
 
   @IsOptional()
   @IsArray()
-  posts: IPost[];
+  posts?: IPost[];
 }

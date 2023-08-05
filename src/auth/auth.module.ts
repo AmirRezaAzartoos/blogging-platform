@@ -3,11 +3,11 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtGuard } from './guards/jwt.guard';
 import { JwtStrategy } from './guards/jwt.strategy';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserEntity } from 'src/users/entities/user.entity';
-import { UsersService } from 'src/users/users.service';
-import { UsersController } from 'src/users/users.controller';
+import { UserEntity } from '../users/entities/user.entity';
+import { UsersService } from '../users/users.service';
+import { UsersController } from '../users/users.controller';
 import { RolesGuard } from './guards/roles.guard';
-import { BlogModule } from 'src/blog/blog.module';
+import { BlogModule } from '../blog/blog.module';
 import { PostOwnerGuard } from './guards/postOwner.guard';
 import { UserOwnerGuard } from './guards/userOwner.guard';
 

@@ -10,15 +10,16 @@ import {
   UseGuards,
   Put,
   Logger,
+  BadRequestException,
 } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
-import { Roles } from 'src/auth/decorators/roles.decorator';
-import { Role } from 'src/users/entities/role.enum';
-import { JwtGuard } from 'src/auth/guards/jwt.guard';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { CommentOwnerGuard } from 'src/auth/guards/commentOwner.guard';
+import { Roles } from '../../auth/decorators/roles.decorator';
+import { Role } from '../../users/entities/role.enum';
+import { JwtGuard } from '../../auth/guards/jwt.guard';
+import { RolesGuard } from '../../auth/guards/roles.guard';
+import { CommentOwnerGuard } from '../../auth/guards/commentOwner.guard';
 
 @Controller('comments')
 export class CommentsController {
@@ -58,6 +59,7 @@ export class CommentsController {
       return comments;
     } catch (error) {
       this.logger.error(`Error occurred while retrieving a comment: ${error}`);
+      throw error;
     }
   }
 
@@ -69,6 +71,7 @@ export class CommentsController {
       return comment;
     } catch (error) {
       this.logger.error(`Error occurred while retrieving a comment: ${error}`);
+      throw error;
     }
   }
 
@@ -88,6 +91,7 @@ export class CommentsController {
       return updateComment;
     } catch (error) {
       this.logger.error(`Error occurred while updating a comment: ${error}`);
+      throw error;
     }
   }
 
@@ -101,6 +105,7 @@ export class CommentsController {
       return deleteComment;
     } catch (error) {
       this.logger.error(`Error occurred while deleting a comment: ${error}`);
+      throw error;
     }
   }
 }

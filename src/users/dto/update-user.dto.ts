@@ -8,35 +8,35 @@ import {
   IsEmail,
 } from 'class-validator';
 import { Role } from '../entities/role.enum';
-import { IPost } from 'src/blog/posts/entities/post.interface';
+import { IPost } from '../../blog/posts/entities/post.interface';
 
 export class UpdateUserDto extends PartialType(RegisterUserDto) {
   @IsOptional()
   @IsNotEmpty()
   @IsString()
-  firstName: string;
+  firstName?: string;
 
   @IsOptional()
   @IsNotEmpty()
   @IsString()
-  lastName: string;
+  lastName?: string;
 
   @IsOptional()
   @IsNotEmpty()
   @IsString()
   @IsEmail()
-  email: string;
+  email?: string;
 
   @IsOptional()
   @IsNotEmpty()
   @IsString()
-  password: string;
+  password?: string;
 
   @IsOptional()
   @IsNotEmpty()
-  role: Role;
+  role?: Role;
 
   @IsOptional()
   @IsArray()
-  posts: IPost[];
+  posts?: IPost[];
 }

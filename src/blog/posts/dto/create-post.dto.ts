@@ -1,5 +1,5 @@
 import { IsArray, IsDate, IsNotEmpty, IsString } from 'class-validator';
-import { IUser } from 'src/users/entities/user.interface';
+import { IUser } from '../../../users/entities/user.interface';
 
 export class CreatePostDto {
   @IsNotEmpty()
