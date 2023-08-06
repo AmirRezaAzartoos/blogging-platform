@@ -31,6 +31,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { Throttle } from '@nestjs/throttler';
 
 @ApiTags('Post')
 @ApiBearerAuth()
@@ -83,6 +84,7 @@ export class PostsController {
   //   }
   // }
 
+  @Throttle(5, 10)
   @Get()
   @ApiCreatedResponse({
     description: `Selcterd posts retrieved.`,
@@ -111,6 +113,7 @@ export class PostsController {
     }
   }
 
+  @Throttle(5, 10)
   @Get(':postId')
   @ApiCreatedResponse({
     description: `Post with id -- retrieved.`,
