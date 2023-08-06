@@ -13,6 +13,7 @@ export class CommentsService {
     private readonly commentRepository: Repository<CommentEntity>,
   ) {}
 
+  // Creates a new comment with the provided information
   async createComment(
     user: IUser,
     createCommentDto: CreateCommentDto,
@@ -21,11 +22,11 @@ export class CommentsService {
     return await this.commentRepository.save(createCommentDto);
   }
 
-  // findAll() {
-  //   return `This action returns all comments`;
-  // }
-
-  async getSelectedComments(take, skip): Promise<CommentEntity[]> {
+  // Retrieves a list of selected comments with pagination (take and skip)
+  async getSelectedComments(
+    take: number,
+    skip: number,
+  ): Promise<CommentEntity[]> {
     return await this.commentRepository
       .findAndCount({ take, skip })
       .then((data) => {
@@ -33,6 +34,7 @@ export class CommentsService {
       });
   }
 
+  // Retrieves a single comment with the specified commentId
   async getComment(commentId: number): Promise<CommentEntity> {
     return await this.commentRepository
       .createQueryBuilder('comment')
@@ -51,6 +53,7 @@ export class CommentsService {
       .getOne();
   }
 
+  // Updates an existing comment with the provided information
   async updateComment(
     commentId: number,
     updateCommentDto: UpdateCommentDto,
@@ -58,7 +61,8 @@ export class CommentsService {
     return await this.commentRepository.update(commentId, updateCommentDto);
   }
 
-  async deleteComment(postId: number): Promise<DeleteResult> {
-    return await this.commentRepository.delete(postId);
+  // Deletes a comment with the specified commentId
+  async deleteComment(commentId: number): Promise<DeleteResult> {
+    return await this.commentRepository.delete(commentId);
   }
 }

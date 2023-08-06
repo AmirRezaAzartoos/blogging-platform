@@ -10,7 +10,6 @@ import {
   UseGuards,
   Request,
   Query,
-  BadRequestException,
 } from '@nestjs/common';
 import { UpdateResult, DeleteResult } from 'typeorm';
 import { PostsService } from './posts.service';
@@ -40,6 +39,7 @@ export class PostsController {
   private readonly logger = new Logger(PostsController.name);
   constructor(private readonly postsService: PostsService) {}
 
+  // Create a new post
   @Roles(Role.ADMIN, Role.USER)
   @UseGuards(JwtGuard, RolesGuard)
   @Post()
@@ -61,33 +61,26 @@ export class PostsController {
     @Request() req: any,
   ): Promise<IPost> {
     try {
+      // Call the postsService to create a new post
       const createdPost = await this.postsService.createPost(
         req.user,
         createPostDto,
       );
+      // Log the successful creation of the post
       this.logger.log(`Post with id ${createdPost.id} created.`);
       return createdPost;
     } catch (error) {
+      // Log and rethrow any errors that occurred during post creation
       this.logger.error(`Error occurred while creating a post: ${error}`);
       throw error;
     }
   }
 
-  // @Get()
-  // async getAllPosts(): Promise<Array<PostEntity>> {
-  //   try {
-  //     const allPosts = await this.postsService.getAllPosts();
-  //     this.logger.log('All posts retrieved.');
-  //     return allPosts;
-  //   } catch (error) {
-  //     this.logger.error(`Error occurred while retrieving all posts: ${error}`);
-  //   }
-  // }
-
+  // Get a list of selected posts
   @Throttle(5, 10)
   @Get()
   @ApiCreatedResponse({
-    description: `Selcterd posts retrieved.`,
+    description: `Selected posts retrieved.`,
     type: [PostEntity],
   })
   @ApiBadRequestResponse({
@@ -98,14 +91,18 @@ export class PostsController {
     @Query('skip') skip: number,
   ): Promise<Array<PostEntity>> {
     try {
+      // Set default values for take and skip if not provided
       take = take > 15 ? 15 : take;
+      // Call the postsService to get a list of selected posts
       const selectedPosts = await this.postsService.getSelectedPosts(
         take || 10,
         skip || 0,
       );
-      this.logger.log('Selcterd posts retrieved.');
+      // Log the successful retrieval of selected posts
+      this.logger.log('Selected posts retrieved.');
       return selectedPosts;
     } catch (error) {
+      // Log and rethrow any errors that occurred during post retrieval
       this.logger.error(
         `Error occurred while retrieving selected posts: ${error}`,
       );
@@ -113,6 +110,7 @@ export class PostsController {
     }
   }
 
+  // Get a single post by its ID
   @Throttle(5, 10)
   @Get(':postId')
   @ApiCreatedResponse({
@@ -124,10 +122,13 @@ export class PostsController {
   })
   async getPost(@Param('postId') postId: number): Promise<PostEntity> {
     try {
+      // Call the postsService to get a single post by its ID
       const post = await this.postsService.getPost(postId);
+      // Log the successful retrieval of the post
       this.logger.log(`Post with id ${postId} retrieved.`);
       return post;
     } catch (error) {
+      // Log and rethrow any errors that occurred during post retrieval
       this.logger.error(
         `Error occurred while retrieving a single post: ${error}`,
       );
@@ -135,6 +136,7 @@ export class PostsController {
     }
   }
 
+  // Update a post by its ID
   @Roles(Role.USER)
   @UseGuards(JwtGuard, RolesGuard, PostOwnerGuard)
   @Put(':postId')
@@ -156,18 +158,22 @@ export class PostsController {
     @Body() updatePostDto: UpdatePostDto,
   ): Promise<UpdateResult> {
     try {
+      // Call the postsService to update the post by its ID
       const updatePost = await this.postsService.updatePost(
         postId,
         updatePostDto,
       );
+      // Log the successful update of the post
       this.logger.log(`Post with id ${postId} updated.`);
       return updatePost;
     } catch (error) {
+      // Log and rethrow any errors that occurred during post update
       this.logger.error(`Error occurred while updating a post: ${error}`);
       throw error;
     }
   }
 
+  // Delete a post by its ID
   @Roles(Role.ADMIN, Role.USER)
   @UseGuards(JwtGuard, RolesGuard, PostOwnerGuard)
   @Delete(':postId')
@@ -186,10 +192,13 @@ export class PostsController {
   })
   async deletePost(@Param('postId') postId: number): Promise<DeleteResult> {
     try {
+      // Call the postsService to delete the post by its ID
       const deletePost = await this.postsService.deletePost(postId);
+      // Log the successful deletion of the post
       this.logger.log(`Post with id ${postId} removed.`);
       return deletePost;
     } catch (error) {
+      // Log and rethrow any errors that occurred during post deletion
       this.logger.error(`Error occurred while deleting a post: ${error}`);
       throw error;
     }

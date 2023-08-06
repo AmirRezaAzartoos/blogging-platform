@@ -38,6 +38,7 @@ export class CommentsController {
   private readonly logger = new Logger(CommentsController.name);
   constructor(private readonly commentsService: CommentsService) {}
 
+  // Creates a new comment with the provided information
   @Roles(Role.USER)
   @UseGuards(JwtGuard, RolesGuard)
   @Post()
@@ -70,6 +71,7 @@ export class CommentsController {
     }
   }
 
+  // Retrieves a list of selected comments with pagination
   @Get()
   @ApiCreatedResponse({
     description: `Selcterd comments retrieved.`,
@@ -95,6 +97,7 @@ export class CommentsController {
     }
   }
 
+  // Retrieves a single comment by ID
   @Get(':id')
   @ApiCreatedResponse({
     description: `Comment with id -- retrieved.`,
@@ -114,6 +117,7 @@ export class CommentsController {
     }
   }
 
+  // Updates an existing comment with the provided information
   @Roles(Role.USER)
   @UseGuards(JwtGuard, RolesGuard, CommentOwnerGuard)
   @Put(':id')
@@ -147,6 +151,7 @@ export class CommentsController {
     }
   }
 
+  // Deletes a comment with the specified ID
   @Roles(Role.ADMIN, Role.USER)
   @UseGuards(JwtGuard, RolesGuard, CommentOwnerGuard)
   @Delete(':id')

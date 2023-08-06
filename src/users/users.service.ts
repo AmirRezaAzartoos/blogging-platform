@@ -22,15 +22,18 @@ export class UsersService {
     private readonly jwtService: JwtService,
   ) {}
 
+  // Hashes the password using bcrypt with a salt factor of 10
   async hashPassword(password: string): Promise<string> {
     return await bcrypt.hashSync(password, 10);
   }
 
+  // Generates a JSON Web Token (JWT) for the user with a specific payload
   private generateJwtToken(user: IUser): string {
     const payload = { id: user.id, email: user.email, role: user.role };
     return this.jwtService.sign(payload);
   }
 
+  // Checks if a user with the given email already exists in the database
   private async checkUserExists(email: string): Promise<IUser> {
     return await this.userRepository.findOne({
       where: { email },
@@ -38,6 +41,7 @@ export class UsersService {
     });
   }
 
+  // Registers a new user with the provided information
   async register(registerUserDto: RegisterUserDto): Promise<IUser> {
     const user = await this.checkUserExists(registerUserDto.email);
     if (user) {
@@ -47,10 +51,11 @@ export class UsersService {
       registerUserDto.password,
     );
     const createUser = await this.userRepository.save(registerUserDto);
-    delete createUser.password;
+    delete createUser.password; // Removes the password from the returned user object for security reasons
     return createUser;
   }
 
+  // Authenticates a user and generates an access token (JWT) upon successful login
   async login(loginUserDto: LoginUserDto): Promise<{ accessToken: string }> {
     const { email, password } = loginUserDto;
     const user = await this.checkUserExists(email);
@@ -61,19 +66,22 @@ export class UsersService {
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials.');
     }
-    delete user.password;
+    delete user.password; // Removes the password from the returned user object for security reasons
     const accessToken = this.generateJwtToken(user);
     return { accessToken };
   }
 
+  // Retrieves all users from the database
   async findAll(): Promise<UserEntity[]> {
     return await this.userRepository.find();
   }
 
+  // Retrieves a single user by ID from the database
   async findOne(id: number): Promise<UserEntity> {
     return await this.userRepository.findOneBy({ id: id });
   }
 
+  // Updates a user's information in the database
   async update(
     id: number,
     updateUserDto: UpdateUserDto,
@@ -81,6 +89,7 @@ export class UsersService {
     return await this.userRepository.update(id, updateUserDto);
   }
 
+  // Deletes a user from the database
   async delete(id: number): Promise<DeleteResult> {
     return await this.userRepository.delete(id);
   }

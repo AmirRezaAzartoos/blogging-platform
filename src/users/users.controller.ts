@@ -38,6 +38,7 @@ export class UsersController {
   private readonly logger = new Logger(UsersController.name);
   constructor(private readonly usersService: UsersService) {}
 
+  // Register a new user
   @Post('register')
   @ApiCreatedResponse({
     description: `User with id -- created.`,
@@ -57,6 +58,7 @@ export class UsersController {
     }
   }
 
+  // User login
   @Post('login')
   @ApiCreatedResponse({
     description: `User logged in.`,
@@ -81,6 +83,7 @@ export class UsersController {
     }
   }
 
+  // Get all users (restricted to ADMIN role)
   @Roles(Role.ADMIN)
   @UseGuards(JwtGuard, RolesGuard)
   @Get()
@@ -108,6 +111,7 @@ export class UsersController {
     }
   }
 
+  // Get a single user by ID (restricted to ADMIN and USER roles)
   @Roles(Role.ADMIN, Role.USER)
   @UseGuards(JwtGuard, RolesGuard, UserOwnerGuard)
   @Get(':id')
@@ -137,6 +141,7 @@ export class UsersController {
     }
   }
 
+  // Update a user by ID (restricted to ADMIN and USER roles)
   @Roles(Role.ADMIN, Role.USER)
   @UseGuards(JwtGuard, RolesGuard, UserOwnerGuard)
   @ApiCreatedResponse({
@@ -167,6 +172,7 @@ export class UsersController {
     }
   }
 
+  // Delete a user by ID (restricted to ADMIN and USER roles)
   @Roles(Role.ADMIN, Role.USER)
   @UseGuards(JwtGuard, RolesGuard, UserOwnerGuard)
   @Delete(':id')

@@ -6,9 +6,9 @@ import { LoggerMiddleware } from './middleware/logger.middleware';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
-import { throttle } from 'rxjs';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
@@ -27,6 +27,11 @@ import { APP_GUARD } from '@nestjs/core';
       ttl: 10,
       limit: 2,
     }),
+    CacheModule.register({
+      ttl: 60,
+      max: 100,
+      isGlobal: true,
+    }),
     BlogModule,
     AuthModule,
   ],
@@ -36,6 +41,10 @@ import { APP_GUARD } from '@nestjs/core';
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: CacheInterceptor,
     },
   ],
 })

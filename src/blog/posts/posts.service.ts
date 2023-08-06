@@ -14,15 +14,13 @@ export class PostsService {
     private readonly postRepository: Repository<PostEntity>,
   ) {}
 
+  // Create a new post in the database.
   async createPost(user: IUser, createPostDto: CreatePostDto): Promise<IPost> {
     createPostDto.author = user;
     return await this.postRepository.save(createPostDto);
   }
 
-  // async getAllPosts(): Promise<PostEntity[]> {
-  //   return await this.postRepository.find();
-  // }
-
+  // Get a list of selected posts with pagination.
   async getSelectedPosts(take, skip): Promise<PostEntity[]> {
     return await this.postRepository
       .findAndCount({ take, skip })
@@ -31,6 +29,7 @@ export class PostsService {
       });
   }
 
+  // Get a single post by its ID along with the author details.
   async getPost(postId: number): Promise<PostEntity> {
     return await this.postRepository
       .createQueryBuilder('post')
@@ -51,6 +50,7 @@ export class PostsService {
       .getOne();
   }
 
+  // Update an existing post in the database by its ID.
   async updatePost(
     postId: number,
     updatePostDto: UpdatePostDto,
@@ -58,6 +58,7 @@ export class PostsService {
     return await this.postRepository.update(postId, updatePostDto);
   }
 
+  // Delete a post from the database by its ID.
   async deletePost(postId: number): Promise<DeleteResult> {
     return await this.postRepository.delete(postId);
   }
