@@ -49,7 +49,7 @@ export class PostEntity {
     type: UserEntity,
   })
   @ManyToOne(() => UserEntity, (userEntity) => userEntity.posts)
-  author: UserEntity;
+  author?: UserEntity;
 
   @ApiProperty({
     description: 'Post publication date',
@@ -57,7 +57,7 @@ export class PostEntity {
     type: Date,
   })
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  publicationDate: Date;
+  publicationDate?: Date;
 
   @ApiProperty({
     description: 'Post tags',
@@ -79,5 +79,5 @@ export class PostEntity {
     type: [CommentEntity],
   })
   @OneToMany(() => CommentEntity, (commentEntity) => commentEntity.post)
-  comments: CommentEntity[];
+  comments?: CommentEntity[];
 }

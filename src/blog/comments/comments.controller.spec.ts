@@ -75,6 +75,13 @@ describe('CommentsController', () => {
     it('should create a new comment', async () => {
       const createCommentDto: CreateCommentDto = {
         content: 'Test comment',
+        post: {
+          id: 3,
+          title: 'test2 update 3',
+          content: 'test2',
+          publicationDate: new Date(),
+          tags: ['test2', 'test3'],
+        },
       };
 
       const user = {
