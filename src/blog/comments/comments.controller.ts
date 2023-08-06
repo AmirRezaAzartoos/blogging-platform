@@ -20,7 +20,19 @@ import { Role } from '../../users/entities/role.enum';
 import { JwtGuard } from '../../auth/guards/jwt.guard';
 import { RolesGuard } from '../../auth/guards/roles.guard';
 import { CommentOwnerGuard } from '../../auth/guards/commentOwner.guard';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiForbiddenResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
+import { CommentEntity } from './entities/comment.entity';
+import { UpdateResult, DeleteResult } from 'typeorm';
 
+@ApiTags('Comment')
+@ApiBearerAuth()
 @Controller('comments')
 export class CommentsController {
   private readonly logger = new Logger(CommentsController.name);
@@ -29,10 +41,23 @@ export class CommentsController {
   @Roles(Role.USER)
   @UseGuards(JwtGuard, RolesGuard)
   @Post()
+  @ApiCreatedResponse({
+    description: `Comment with id -- created.`,
+    type: CommentEntity,
+  })
+  @ApiBadRequestResponse({
+    description: 'Error occurred while creating a comment: ',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized',
+  })
+  @ApiForbiddenResponse({
+    description: 'Forbidden resource',
+  })
   async createComment(
     @Body() createCommentDto: CreateCommentDto,
     @Request() req: any,
-  ) {
+  ): Promise<CommentEntity> {
     try {
       const createdComment = await this.commentsService.createComment(
         req.user,
@@ -46,10 +71,17 @@ export class CommentsController {
   }
 
   @Get()
+  @ApiCreatedResponse({
+    description: `Selcterd comments retrieved.`,
+    type: [CommentEntity],
+  })
+  @ApiBadRequestResponse({
+    description: 'Error occurred while retrieving selected comments: ',
+  })
   async getSelectedComments(
     @Query('take') take: number,
     @Query('skip') skip: number,
-  ) {
+  ): Promise<Array<CommentEntity>> {
     try {
       const comments = await this.commentsService.getSelectedComments(
         take,
@@ -64,7 +96,14 @@ export class CommentsController {
   }
 
   @Get(':id')
-  async getComment(@Param('id') id: number) {
+  @ApiCreatedResponse({
+    description: `Comment with id -- retrieved.`,
+    type: CommentEntity,
+  })
+  @ApiBadRequestResponse({
+    description: 'Error occurred while retrieving a single comment: ',
+  })
+  async getComment(@Param('id') id: number): Promise<CommentEntity> {
     try {
       const comment = await this.commentsService.getComment(id);
       this.logger.log(`Comment with id ${id} retrieved.`);
@@ -78,10 +117,23 @@ export class CommentsController {
   @Roles(Role.USER)
   @UseGuards(JwtGuard, RolesGuard, CommentOwnerGuard)
   @Put(':id')
+  @ApiCreatedResponse({
+    description: `Comment with id -- updated.`,
+    type: UpdateResult,
+  })
+  @ApiBadRequestResponse({
+    description: 'Error occurred while updating a comment: ',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized',
+  })
+  @ApiForbiddenResponse({
+    description: 'Forbidden resource',
+  })
   async updateComment(
     @Param('id') id: number,
     @Body() updateCommentDto: UpdateCommentDto,
-  ) {
+  ): Promise<UpdateResult> {
     try {
       const updateComment = await this.commentsService.updateComment(
         id,
@@ -98,7 +150,20 @@ export class CommentsController {
   @Roles(Role.ADMIN, Role.USER)
   @UseGuards(JwtGuard, RolesGuard, CommentOwnerGuard)
   @Delete(':id')
-  async deleteComment(@Param('id') id: number) {
+  @ApiCreatedResponse({
+    description: `Comment with id -- removed.`,
+    type: DeleteResult,
+  })
+  @ApiBadRequestResponse({
+    description: 'Error occurred while removing a comment: ',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized',
+  })
+  @ApiForbiddenResponse({
+    description: 'Forbidden resource',
+  })
+  async deleteComment(@Param('id') id: number): Promise<DeleteResult> {
     try {
       const deleteComment = await this.commentsService.deleteComment(id);
       this.logger.log(`Comment with id ${id} removed.`);

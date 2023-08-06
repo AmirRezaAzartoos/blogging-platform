@@ -20,13 +20,32 @@ import { Role } from './entities/role.enum';
 import { JwtGuard } from '../auth/guards/jwt.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { UserOwnerGuard } from '../auth/guards/userOwner.guard';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiForbiddenResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
+import { UserEntity } from './entities/user.entity';
+import { UpdateResult, DeleteResult } from 'typeorm';
 
+@ApiTags('User')
+@ApiBearerAuth()
 @Controller('users')
 export class UsersController {
   private readonly logger = new Logger(UsersController.name);
   constructor(private readonly usersService: UsersService) {}
 
   @Post('register')
+  @ApiCreatedResponse({
+    description: `User with id -- created.`,
+    type: UserEntity,
+  })
+  @ApiBadRequestResponse({
+    description: 'Error occurred while registering the user: ',
+  })
   async register(@Body() registerUserDto: RegisterUserDto): Promise<IUser> {
     try {
       const createUser = await this.usersService.register(registerUserDto);
@@ -39,6 +58,16 @@ export class UsersController {
   }
 
   @Post('login')
+  @ApiCreatedResponse({
+    description: `User logged in.`,
+    type: Promise<{ accessToken: string }>,
+  })
+  @ApiBadRequestResponse({
+    description: 'Error occurred during user login: ',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Error occurred during user login: Invalid credentials.',
+  })
   async login(
     @Body() loginUserDto: LoginUserDto,
   ): Promise<{ accessToken: string }> {
@@ -55,7 +84,20 @@ export class UsersController {
   @Roles(Role.ADMIN)
   @UseGuards(JwtGuard, RolesGuard)
   @Get()
-  findAll() {
+  @ApiCreatedResponse({
+    description: `All users retrieved.`,
+    type: [UserEntity],
+  })
+  @ApiBadRequestResponse({
+    description: 'Error occurred while retrieving users: ',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized',
+  })
+  @ApiForbiddenResponse({
+    description: 'Forbidden resource',
+  })
+  findAll(): Promise<Array<UserEntity>> {
     try {
       const foundUsers = this.usersService.findAll();
       this.logger.log(`All users retrieved.`);
@@ -69,27 +111,58 @@ export class UsersController {
   @Roles(Role.ADMIN, Role.USER)
   @UseGuards(JwtGuard, RolesGuard, UserOwnerGuard)
   @Get(':id')
-  findOne(@Param('id') id: number) {
+  @ApiCreatedResponse({
+    description: `User with id -- retrieved.`,
+    type: UserEntity,
+  })
+  @ApiBadRequestResponse({
+    description: 'Error occurred while retrieving a single user: ',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized',
+  })
+  @ApiForbiddenResponse({
+    description: 'Forbidden resource',
+  })
+  findOne(@Param('id') id: number): Promise<UserEntity> {
     try {
       const foundUser = this.usersService.findOne(id);
       this.logger.log(`User with id ${id} retrieved.`);
       return foundUser;
     } catch (error) {
-      this.logger.error(`Error occurred while retrieving users: ${error}`);
+      this.logger.error(
+        `Error occurred while retrieving a single user: ${error}`,
+      );
       throw error;
     }
   }
 
   @Roles(Role.ADMIN, Role.USER)
   @UseGuards(JwtGuard, RolesGuard, UserOwnerGuard)
+  @ApiCreatedResponse({
+    description: `User with id -- updated.`,
+    type: UpdateResult,
+  })
+  @ApiBadRequestResponse({
+    description: 'Error occurred while updating a user: ',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized',
+  })
+  @ApiForbiddenResponse({
+    description: 'Forbidden resource',
+  })
   @Put(':id')
-  async update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
+  async update(
+    @Param('id') id: number,
+    @Body() updateUserDto: UpdateUserDto,
+  ): Promise<UpdateResult> {
     try {
       const updateUser = await this.usersService.update(id, updateUserDto);
       this.logger.log(`User with id ${id} updated.`);
       return updateUser;
     } catch (error) {
-      this.logger.error(`Error occurred while retrieving users: ${error}`);
+      this.logger.error(`Error occurred while updating a user: ${error}`);
       throw error;
     }
   }
@@ -97,13 +170,26 @@ export class UsersController {
   @Roles(Role.ADMIN, Role.USER)
   @UseGuards(JwtGuard, RolesGuard, UserOwnerGuard)
   @Delete(':id')
-  async delete(@Param('id') id: number) {
+  @ApiCreatedResponse({
+    description: `User with id -- removed.`,
+    type: DeleteResult,
+  })
+  @ApiBadRequestResponse({
+    description: 'Error occurred while removing a user: ',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized',
+  })
+  @ApiForbiddenResponse({
+    description: 'Forbidden resource',
+  })
+  async delete(@Param('id') id: number): Promise<DeleteResult> {
     try {
       const deletedUser = this.usersService.delete(id);
       this.logger.log(`User with id ${id} removed.`);
       return deletedUser;
     } catch (error) {
-      this.logger.error(`Error occurred while retrieving users: ${error}`);
+      this.logger.error(`Error occurred while removing a user: ${error}`);
       throw error;
     }
   }

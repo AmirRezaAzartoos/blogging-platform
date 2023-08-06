@@ -23,7 +23,17 @@ import { Roles } from '../../auth/decorators/roles.decorator';
 import { Role } from '../../users/entities/role.enum';
 import { RolesGuard } from '../../auth/guards/roles.guard';
 import { PostOwnerGuard } from '../../auth/guards/postOwner.guard';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiForbiddenResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 
+@ApiTags('Post')
+@ApiBearerAuth()
 @Controller('posts')
 export class PostsController {
   private readonly logger = new Logger(PostsController.name);
@@ -32,6 +42,19 @@ export class PostsController {
   @Roles(Role.ADMIN, Role.USER)
   @UseGuards(JwtGuard, RolesGuard)
   @Post()
+  @ApiCreatedResponse({
+    description: `Post with id -- created.`,
+    type: PostEntity,
+  })
+  @ApiBadRequestResponse({
+    description: 'Error occurred while creating a post: ',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized',
+  })
+  @ApiForbiddenResponse({
+    description: 'Forbidden resource',
+  })
   async createPost(
     @Body() createPostDto: CreatePostDto,
     @Request() req: any,
@@ -61,6 +84,13 @@ export class PostsController {
   // }
 
   @Get()
+  @ApiCreatedResponse({
+    description: `Selcterd posts retrieved.`,
+    type: [PostEntity],
+  })
+  @ApiBadRequestResponse({
+    description: 'Error occurred while retrieving selected posts: ',
+  })
   async getSelectedPosts(
     @Query('take') take: number,
     @Query('skip') skip: number,
@@ -82,6 +112,13 @@ export class PostsController {
   }
 
   @Get(':postId')
+  @ApiCreatedResponse({
+    description: `Post with id -- retrieved.`,
+    type: PostEntity,
+  })
+  @ApiBadRequestResponse({
+    description: 'Error occurred while retrieving a single post: ',
+  })
   async getPost(@Param('postId') postId: number): Promise<PostEntity> {
     try {
       const post = await this.postsService.getPost(postId);
@@ -95,9 +132,22 @@ export class PostsController {
     }
   }
 
-  @Roles(Role.USER) // Here i think its for best if ADMIN can not edit post
+  @Roles(Role.USER)
   @UseGuards(JwtGuard, RolesGuard, PostOwnerGuard)
   @Put(':postId')
+  @ApiCreatedResponse({
+    description: `Post with id -- updated.`,
+    type: UpdateResult,
+  })
+  @ApiBadRequestResponse({
+    description: 'Error occurred while updating a post: ',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized',
+  })
+  @ApiForbiddenResponse({
+    description: 'Forbidden resource',
+  })
   async updatePost(
     @Param('postId') postId: number,
     @Body() updatePostDto: UpdatePostDto,
@@ -118,6 +168,19 @@ export class PostsController {
   @Roles(Role.ADMIN, Role.USER)
   @UseGuards(JwtGuard, RolesGuard, PostOwnerGuard)
   @Delete(':postId')
+  @ApiCreatedResponse({
+    description: `Post with id -- removed.`,
+    type: DeleteResult,
+  })
+  @ApiBadRequestResponse({
+    description: 'Error occurred while removing a post: ',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized',
+  })
+  @ApiForbiddenResponse({
+    description: 'Forbidden resource',
+  })
   async deletePost(@Param('postId') postId: number): Promise<DeleteResult> {
     try {
       const deletePost = await this.postsService.deletePost(postId);

@@ -5,5 +5,5 @@ export interface IComment {
   content: string;
   author?: IUser;
   publicationDate?: Date;
-  post?: IPost;
+  post: IPost;
 }
